@@ -1,0 +1,22 @@
+# Health check endpoint.
+# Used by infrastructure (load balancers, container orchestrators, uptime
+# checks) to verify the API process is running.
+
+health:
+  get:
+    summary: Health check
+    operationId: getHealth
+    security: []
+    responses:
+      '200':
+        description: Service is healthy
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  example: 'ok'

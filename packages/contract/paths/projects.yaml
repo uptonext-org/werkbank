@@ -1,0 +1,3 @@
+# API endpoints for projects.
+# Defines operations such as GET, POST, PUT, and DELETE
+# for /projects and /projects/{id}.

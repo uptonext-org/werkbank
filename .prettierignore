@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+.expo
+.turbo
+coverage
+pnpm-lock.yaml
+apps/api/.venv
+apps/api/**/__pycache__
+
+# Prose docs are hand-formatted, not auto-formatted.
+docs/
+*.md

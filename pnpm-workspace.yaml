@@ -1,0 +1,16 @@
+# pnpm workspace definition.
+#
+# The Python FastAPI backend (apps/api) and the future Python database
+# package (packages/db) are intentionally NOT listed here — they are
+# managed as standard Python projects (pyproject.toml / venv), not as
+# Node.js packages.
+packages:
+  - 'apps/web'
+  - 'apps/mobile'
+  - 'packages/contract'
+  - 'packages/core'
+allowBuilds:
+  core-js: false
+  esbuild: true
+  protobufjs: true
+  unrs-resolver: true

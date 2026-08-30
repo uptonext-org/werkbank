@@ -1,0 +1,35 @@
+# Central OpenAPI specification for the API.
+# Defines the API version, server, global security settings,
+# and references to endpoints and schemas.
+
+openapi: 3.0.0
+info:
+  title: UpToWork API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/v1
+
+paths:
+  /health:
+    $ref: './paths/health.yaml#/health'
+  /auth/login:
+    $ref: './paths/auth.yaml#/login'
+  /auth/logout:
+    $ref: './paths/auth.yaml#/logout'
+  /auth/refresh:
+    $ref: './paths/auth.yaml#/refresh'
+  # /customers, /projects, /offers, /invoices, /time-entries are intentionally
+  # not wired up yet. The corresponding stub files under paths/ and schemas/
+  # are placeholders for the apps/api modules of the same name and will be
+  # filled in and referenced here once those modules are implemented.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      $ref: './schemas/error.yaml#/Error'

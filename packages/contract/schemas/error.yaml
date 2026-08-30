@@ -1,0 +1,19 @@
+# Standardized API error format.
+# Defines the structure and fields returned for API errors.
+
+Error:
+  type: object
+  required:
+    - code
+    - message
+  properties:
+    code:
+      type: string
+      example: 'UNAUTHORIZED'
+    message:
+      type: string
+      example: 'Invalid credentials'
+    details:
+      type: object
+      additionalProperties: true
+      nullable: true

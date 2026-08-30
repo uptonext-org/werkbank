@@ -1,0 +1,53 @@
+# --- OS / editor ---
+.DS_Store
+*.swp
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# --- Node / pnpm / Turborepo ---
+node_modules/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+pnpm-debug.log*
+npm-debug.log*
+yarn-error.log*
+
+# --- Vite (apps/web) ---
+apps/web/dist/
+
+# --- Expo (apps/mobile) ---
+apps/mobile/.expo/
+apps/mobile/dist/
+apps/mobile/web-build/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# --- Python / FastAPI (apps/api) ---
+apps/api/.venv/
+apps/api/**/__pycache__/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Env files (never commit real secrets) ---
+.env
+.env.*
+!.env.example
+
+# --- Docker ---
+*.pid
+
+# --- Alembic ---
+# Migration files ARE committed; only local scratch state is ignored.

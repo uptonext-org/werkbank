@@ -1,0 +1,15 @@
+apis:
+  main:
+    root: openapi.yaml
+
+extends:
+  - recommended
+
+rules:
+  # The local dev server is the only server documented at this stage of the
+  # project; revisit once staging/production servers exist.
+  no-server-example.com: off
+  # No license has been chosen for the API yet.
+  info-license: off
+  # Health checks don't have a meaningful 4xx response.
+  operation-4xx-response: off
