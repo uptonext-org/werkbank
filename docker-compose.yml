@@ -2,18 +2,27 @@
 #
 # Usage:
 #   docker compose up -d db        # just PostgreSQL, run apps/api locally
-#   docker compose up --build      # PostgreSQL + the API container
+#   docker compose up --build      # PostgreSQL + the API + the web app
+#
+# Relationship: web -> api -> db, all reachable from each other by their
+# service name (e.g. api connects to "db", not "localhost") over the
+# default compose network. Only the ports a developer needs from the host
+# are published below.
 
 services:
   db:
     image: postgres:16-alpine
+    container_name: werkbank-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-werkbank}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-werkbank}
       POSTGRES_DB: ${POSTGRES_DB:-werkbank}
     ports:
-      - '${POSTGRES_PORT:-5432}:5432'
+      # Bound to localhost only — postgres is for this compose network's
+      # internal use (api) and local host tooling (a DB GUI, psql), not
+      # for exposure to other machines on the network.
+      - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -26,14 +35,45 @@ services:
     build:
       context: .
       dockerfile: infra/docker/api.Dockerfile
+    container_name: werkbank-api
     restart: unless-stopped
     environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-true}
+      API_V1_PREFIX: ${API_V1_PREFIX:-/api/v1}
+      # Always "db" here (not $POSTGRES_HOST) — that variable is for
+      # apps/api running outside Docker; inside compose, api must reach
+      # PostgreSQL by its compose service name on the shared network.
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-werkbank}:${POSTGRES_PASSWORD:-werkbank}@db:5432/${POSTGRES_DB:-werkbank}
+      SECRET_KEY: ${SECRET_KEY:-change-me}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
     ports:
+      # Published on all interfaces (not just localhost) so a physical
+      # mobile device on the same network can reach it via the host's LAN
+      # IP — see README's "Mobile app + Docker networking" section.
       - '${API_PORT:-8000}:8000'
     depends_on:
       db:
         condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        # Baked into the built bundle at image build time (Vite inlines
+        # VITE_* vars at build, not at container runtime) — changing this
+        # requires rebuilding the image, not just restarting the
+        # container. Defaults to a same-origin path proxied to the api
+        # service by nginx (see infra/docker/nginx.web.conf), so the
+        # default needs no rebuild for the normal docker-compose setup.
+        VITE_API_URL: ${VITE_API_URL:-/api}
+    container_name: werkbank-web
+    restart: unless-stopped
+    ports:
+      - '${WEB_PORT:-5173}:8080'
+    depends_on:
+      - api
 
 volumes:
   postgres_data:
