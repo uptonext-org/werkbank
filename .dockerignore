@@ -1,0 +1,43 @@
+# Applies to both infra/docker/api.Dockerfile and infra/docker/web.Dockerfile
+# (both build with the repo root as context).
+
+.git/
+.github/
+
+# --- Node / pnpm / Turborepo ---
+**/node_modules/
+**/dist/
+**/build/
+**/.turbo/
+**/*.tsbuildinfo
+
+# --- Vite / Expo build & tooling caches ---
+apps/web/dist/
+apps/mobile/.expo/
+apps/mobile/dist/
+apps/mobile/web-build/
+
+# --- Python ---
+apps/api/.venv/
+**/__pycache__/
+**/*.py[cod]
+**/*.egg-info/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.coverage
+**/htmlcov/
+
+# --- Env files (never bake secrets into an image) ---
+.env
+.env.*
+!.env.example
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- Docs and non-runtime project files not needed inside images ---
+docs/
+*.md

@@ -1,0 +1,3 @@
+# Data schemas for projects.
+# Defines request and response schemas such as Project,
+# ProjectCreate, and ProjectList.

@@ -1,0 +1,121 @@
+# API endpoints for authentication.
+# Defines login, logout, token refresh, and related operations.
+
+login:
+  post:
+    summary: Login
+    operationId: login
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                format: email
+                example: 'max@musterbau.de'
+              password:
+                type: string
+                example: '****'
+    responses:
+      '200':
+        description: Login successful
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: 'eyJhbGciOiJIUzI1NiJ9...'
+                refreshToken:
+                  type: string
+                  example: 'eyJhbGciOiJIUzI1NiJ9...'
+                expiresIn:
+                  type: integer
+                  example: 3600
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    name:
+                      type: string
+                      example: 'Max Müller'
+                    email:
+                      type: string
+                      example: 'max@musterbau.de'
+                    role:
+                      type: string
+                      enum:
+                        - ADMIN
+                        - OFFICE
+                        - SITE_WORKER #Todo, die Rolle abgestimmt
+                        - CUSTOMER
+      '401':
+        description: Invalid credentials
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+logout:
+  post:
+    summary: Logout
+    operationId: logout
+    security:
+      - bearerAuth: []
+    responses:
+      '204':
+        description: Logout successful
+      '401':
+        description: Not authenticated
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+
+refresh:
+  post:
+    summary: Refresh token
+    operationId: refreshToken
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - refreshToken
+            properties:
+              refreshToken:
+                type: string
+                example: 'eyJhbGciOiJIUzI1NiJ9...'
+    responses:
+      '200':
+        description: Token refreshed
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: 'eyJhbGciOiJIUzI1NiJ9...'
+                expiresIn:
+                  type: integer
+                  example: 3600
+      '401':
+        description: Invalid refresh token
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
