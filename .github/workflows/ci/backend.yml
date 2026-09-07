@@ -1,0 +1,53 @@
+name: Backend CI
+
+# Reusable workflow for the FastAPI backend (apps/api). Called by
+# .github/workflows/ci/ci.yml. Runs independently of Web and Contract.
+#
+# Steps run in sequence with normal fail-fast behavior (no
+# continue-on-error): if Ruff fails, Pyright/pytest/Docker build are
+# skipped; if pytest fails, the Docker build is skipped; and so on.
+
+on:
+  workflow_call:
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Python version from apps/api/pyproject.toml (requires-python,
+      # ruff target-version, mypy python_version all pin 3.11).
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: apps/api/pyproject.toml
+
+      # Existing project setup (see apps/api/README.md): pip install of the
+      # project in editable mode with its "dev" extra — no separate
+      # dependency manager (Poetry/uv/pip-tools) is used here.
+      - name: Install backend dependencies
+        working-directory: apps/api
+        run: pip install -e ".[dev]"
+
+      - name: Lint with Ruff
+        working-directory: apps/api
+        run: ruff check .
+
+      - name: Type check with Pyright
+        working-directory: apps/api
+        run: pyright
+
+      - name: Run tests with pytest
+        working-directory: apps/api
+        run: pytest
+
+      # Validation build only — the image is built to confirm it still
+      # builds, never pushed or deployed. Context is the repo root, matching
+      # docker-compose.yml and the Dockerfile's own comments.
+      - name: Build backend Docker image
+        run: docker build -f infra/docker/api.Dockerfile -t werkbank-api:ci .

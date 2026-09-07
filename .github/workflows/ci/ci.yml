@@ -1,0 +1,37 @@
+name: CI
+
+# Orchestrator only — no build/lint/test commands live here. Each component
+# owns its own reusable workflow (backend.yml, web.yml, contract.yml) so it
+# can be extended independently (e.g. adding mobile.yml later) without this
+# file growing. CD (build/push/deploy) is intentionally out of scope and
+# lives separately under .github/workflows/cd/.
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+# Cancel a still-running CI run for the same branch/PR when a newer commit
+# supersedes it.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # No `needs:` between these — they run in parallel and independently.
+  # A failure in one (e.g. Backend) fails the overall CI run but does not
+  # prevent the others from starting or completing.
+  backend:
+    name: Backend
+    uses: ./.github/workflows/ci/backend.yml
+
+  web:
+    name: Web
+    uses: ./.github/workflows/ci/web.yml
+
+  contract:
+    name: API Contract
+    uses: ./.github/workflows/ci/contract.yml

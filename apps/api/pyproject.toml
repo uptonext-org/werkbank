@@ -20,6 +20,7 @@ dev = [
   "httpx>=0.28,<0.29",
   "ruff>=0.8,<0.9",
   "mypy>=1.13,<2",
+  "pyright>=1.1,<2",
 ]
 
 [build-system]
@@ -44,3 +45,11 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+# Pyright is the project's selected type checker (used in CI); mypy above
+# remains available for local use. Minimal config: just point it at the
+# source and test trees and match ruff's target Python version.
+[tool.pyright]
+include = ["app", "tests"]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
