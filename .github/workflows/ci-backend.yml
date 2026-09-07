@@ -1,7 +1,7 @@
 name: Backend CI
 
 # Reusable workflow for the FastAPI backend (apps/api). Called by
-# .github/workflows/ci/ci.yml. Runs independently of Web and Contract.
+# .github/workflows/ci.yml. Runs independently of Web and Contract.
 #
 # Steps run in sequence with normal fail-fast behavior (no
 # continue-on-error): if Ruff fails, Pyright/pytest/Docker build are

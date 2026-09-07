@@ -1,7 +1,7 @@
 name: API Contract CI
 
 # Reusable workflow for the shared OpenAPI contract (packages/contract).
-# Called by .github/workflows/ci/ci.yml. Runs independently of Backend and
+# Called by .github/workflows/ci.yml. Runs independently of Backend and
 # Web, and only validates the contract — it never modifies openapi.yaml.
 
 on:

@@ -1,7 +1,7 @@
 name: Web CI
 
 # Reusable workflow for the React/Vite web app (apps/web). Called by
-# .github/workflows/ci/ci.yml. Runs independently of Backend and Contract.
+# .github/workflows/ci.yml. Runs independently of Backend and Contract.
 #
 # Steps run in sequence with normal fail-fast behavior (no
 # continue-on-error): if lint fails, type check/tests/builds are skipped,

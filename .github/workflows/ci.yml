@@ -26,12 +26,12 @@ jobs:
   # prevent the others from starting or completing.
   backend:
     name: Backend
-    uses: ./.github/workflows/ci/backend.yml
+    uses: ./.github/workflows/ci-backend.yml
 
   web:
     name: Web
-    uses: ./.github/workflows/ci/web.yml
+    uses: ./.github/workflows/ci-web.yml
 
   contract:
     name: API Contract
-    uses: ./.github/workflows/ci/contract.yml
+    uses: ./.github/workflows/ci-contract.yml
