@@ -18,7 +18,7 @@ on:
 # supersedes it.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true # Should be false when we need parallel runs.
+  cancel-in-progress: true # It should be false when we need parallel runs.
 
 jobs:
   # No `needs:` between these — they run in parallel and independently.
