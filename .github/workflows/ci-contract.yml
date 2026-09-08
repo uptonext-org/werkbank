@@ -1,0 +1,36 @@
+name: API Contract CI
+
+# Reusable workflow for the shared OpenAPI contract (packages/contract).
+# Called by .github/workflows/ci.yml. Runs independently of Backend and
+# Web, and only validates the contract — it never modifies openapi.yaml.
+
+on:
+  workflow_call:
+
+jobs:
+  contract:
+    name: API Contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      # Scoped to the contract package only — it has no workspace
+      # dependencies, so this installs just @redocly/cli, not the rest of
+      # the monorepo (web, mobile, core).
+      - name: Install contract dependencies
+        run: pnpm install --frozen-lockfile --filter contract
+
+      # Existing Redocly tooling (packages/contract/redocly.yaml), run via
+      # the package's own "lint" script.
+      - name: Validate OpenAPI contract
+        run: pnpm --filter contract lint

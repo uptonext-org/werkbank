@@ -1,0 +1,55 @@
+name: Web CI
+
+# Reusable workflow for the React/Vite web app (apps/web). Called by
+# .github/workflows/ci.yml. Runs independently of Backend and Contract.
+#
+# Steps run in sequence with normal fail-fast behavior (no
+# continue-on-error): if lint fails, type check/tests/builds are skipped,
+# and so on down the chain.
+
+on:
+  workflow_call:
+
+jobs:
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Version comes from the workspace root's "packageManager" field
+      # (pnpm@11.24.0) — no version pinned here to avoid a second source of
+      # truth.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      # Node 22, matching infra/docker/web.Dockerfile (node:22-alpine),
+      # which satisfies the root package.json engines constraint (node >=20).
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint with ESLint
+        run: pnpm --filter web lint
+
+      - name: Type check
+        run: pnpm --filter web typecheck
+
+      - name: Run tests with Vitest
+        run: pnpm --filter web test
+
+      - name: Build web app with Vite
+        run: pnpm --filter web build
+
+      # Validation build only — the image is built to confirm it still
+      # builds, never pushed or deployed. Context is the repo root: the
+      # Dockerfile prunes the monorepo with `turbo prune` and needs the
+      # full workspace to do so.
+      - name: Build web Docker image
+        run: docker build -f infra/docker/web.Dockerfile -t werkbank-web:ci .
