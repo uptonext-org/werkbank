@@ -5,20 +5,29 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config([
+  // Generated Vite build output is excluded from linting.
   { ignores: ['dist'] },
+
   {
+    // Only TypeScript and TSX source files are linted.
     files: ['**/*.{ts,tsx}'],
-    // react-hooks' "recommended-latest" preset still ships in the legacy
-    // eslintrc plugin format (a "plugins" array of strings), which flat
-    // config's `extends` rejects — so it's wired in manually below
-    // (plugin + its rules) instead of through `extends`.
-    extends: [js.configs.recommended, tseslint.configs.recommended, reactRefresh.configs.vite],
+
+    // Recommended rules from the selected ESLint, TypeScript,
+    // React Hooks and React Refresh configurations.
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactRefresh.configs.vite,
+    ],
+
     plugins: {
       'react-hooks': reactHooks,
     },
+
     rules: {
       ...reactHooks.configs['recommended-latest'].rules,
     },
+
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
