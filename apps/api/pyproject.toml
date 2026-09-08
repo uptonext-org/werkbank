@@ -35,6 +35,12 @@ line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]
+# Enabled rule sets:
+# E   - pycodestyle
+# F   - Pyflakes
+# I   - isort
+# UP  - pyupgrade
+# B   - flake8-bugbear
 select = ["E", "F", "I", "UP", "B"]
 
 [tool.mypy]
@@ -46,9 +52,10 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
-# Pyright is the project's selected type checker (used in CI); mypy above
-# remains available for local use. Minimal config: just point it at the
-# source and test trees and match ruff's target Python version.
+# Pyright is the project's selected type checker and is used in CI.
+# It checks the application code in "app" and the test code in "tests".
+# "basic" is intentionally used for the MVP to provide useful type
+# checking without enforcing strict typing across the existing codebase.
 [tool.pyright]
 include = ["app", "tests"]
 pythonVersion = "3.11"
